@@ -1,0 +1,198 @@
+version: '3.8'
+
+services:
+  # Databases
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: edim
+      POSTGRES_USER: edim_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-edim_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edim_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    environment:
+      POSTGRES_DB: edim_timeseries
+      POSTGRES_USER: edim_user
+      POSTGRES_PASSWORD: ${TIMESCALE_PASSWORD:-edim_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edim_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: edim_user
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-edim_password}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Services
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://edim_user:edim_password@postgres:5432/edim
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/api-gateway:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  ingestion:
+    build:
+      context: ./services/ingestion
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://edim_user:edim_password@postgres:5432/edim
+      - TIMESCALE_URL=postgresql://edim_user:edim_password@timescaledb:5432/edim_timeseries
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      timescaledb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/ingestion:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+
+  intelligence:
+    build:
+      context: ./services/intelligence
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://edim_user:edim_password@postgres:5432/edim
+      - TIMESCALE_URL=postgresql://edim_user:edim_password@timescaledb:5432/edim_timeseries
+      - REDIS_URL=redis://redis:6379/0
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI:-http://mlflow:5000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      timescaledb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/intelligence:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+
+  risk-alerting:
+    build:
+      context: ./services/risk-alerting
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://edim_user:edim_password@postgres:5432/edim
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_URL=amqp://edim_user:edim_password@rabbitmq:5672/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/risk-alerting:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8003 --reload
+
+  worker:
+    build:
+      context: ./services/worker
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://edim_user:edim_password@postgres:5432/edim
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_URL=amqp://edim_user:edim_password@rabbitmq:5672/
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/worker:/app
+    command: celery -A app.celery_app worker --loglevel=info
+
+  # ML Services
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.8.1
+    ports:
+      - "5000:5000"
+    environment:
+      - BACKEND_STORE_URI=postgresql://edim_user:edim_password@postgres:5432/edim
+      - DEFAULT_ARTIFACT_ROOT=/mlflow/artifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - mlflow_data:/mlflow/artifacts
+
+  # Frontend
+  web-dashboard:
+    build:
+      context: ./frontend/web-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_WS_URL=ws://localhost:8000
+    depends_on:
+      - api-gateway
+    volumes:
+      - ./frontend/web-dashboard:/app
+      - /app/node_modules
+    command: npm start
+
+volumes:
+  postgres_data:
+  timescale_data:
+  redis_data:
+  rabbitmq_data:
+  mlflow_data:
+
