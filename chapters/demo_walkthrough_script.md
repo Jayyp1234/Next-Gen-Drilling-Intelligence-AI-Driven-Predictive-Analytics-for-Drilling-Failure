@@ -1,0 +1,233 @@
+# DrillGuard — Live Demo Walkthrough Script
+### For Drilling Engineers & Industry Professionals
+
+**Presenter:** Okeke Johnpaul Ebube
+**Duration:** 15-20 minutes + Q&A
+**URL:** drill-guard-frontend.vercel.app
+
+---
+
+## BEFORE YOU START
+
+Open the dashboard in Chrome on a large screen. Log in before the meeting starts so you go straight to the Fleet Overview. Have the dashboard in dark mode (it looks more impressive and is industry-standard for control room software).
+
+---
+
+## OPENING (1 minute)
+
+> "Thank you for taking the time. I'll keep this short and focused.
+>
+> I'm building a system called **DrillGuard**. The simplest way to describe it — imagine if your drilling parameters were being watched 24/7 by three different AI models, each looking at the data from a different angle, and the moment something starts going wrong, you get a single risk score on your screen telling you exactly how bad it is, how much time you have, and what to do about it.
+>
+> That's DrillGuard. Let me show you what it looks like."
+
+---
+
+## SCREEN 1: FLEET OVERVIEW (2-3 minutes)
+
+*[You should be on the main dashboard showing the grid of well cards]*
+
+> "This is the Fleet Overview — the first thing an operations manager or a drilling superintendent sees when they log in. You're looking at all the wells you're responsible for, at a glance.
+>
+> Every well has a color. Green means normal. Yellow means something's worth watching. Orange means we've detected a developing issue. Red means we think you need to act now.
+>
+> Look at **Agbami Deep-1** here — it's red, risk score 82, and it says the time-to-impact is about 12 minutes. That means our AI estimates you have roughly 12 minutes before this situation crosses into a serious failure. That number is not a guess — it's calculated from the rate at which the risk score has been climbing over the last 15 minutes.
+>
+> Now contrast that with **Bonny-12** over here — green, risk score 8, everything is quiet. You don't need to worry about this well right now. The system tells you where to focus your attention."
+
+**[Click the 'Map' tab]**
+
+> "This is the geospatial view. You can see where each well is positioned in the Gulf of Guinea. The markers pulse based on risk level — you can see Agbami pulsing red. If you're managing 20 or 30 wells, this is how you spot trouble from across the room."
+
+**[Click the 'Shift Handover' tab]**
+
+> "This is something I think you'll find interesting. This is an AI-generated shift handover summary. At the end of every 12-hour shift, DrillGuard automatically writes a summary of what happened — average risk, peak risk, how many alerts, what sensor anomalies were detected, and what the incoming crew should watch out for.
+>
+> **Let me ask you — how much time does your team currently spend writing shift handover reports? And how much detail actually gets passed on?**"
+
+*[PAUSE — let them answer. This is your first feedback moment.]*
+
+---
+
+## SCREEN 2: WELL DETAIL — THE CORE (4-5 minutes)
+
+*[Click on Agbami Deep-1 (the ACTION well) to open Well Detail]*
+
+> "This is the heart of DrillGuard. This is the live monitoring view for a single well.
+>
+> Up top — well name, current depth, operational state, the risk gauge showing 82 out of 100, and the time-to-impact badge.
+>
+> Below that — you're looking at real-time sensor charts. These are the eight parameters we're monitoring:"
+
+*[Scroll through the charts slowly]*
+
+> "**Gamma ray, block position, collar RPM, stick-slip, shock peak, ECD, downhole temperature, downhole pressure.** Each chart shows the last 24 hours of data. You can change that to 1 hour, 6 hours, or 12 hours depending on what you want to see.
+>
+> Now here's what's critical — **look at the last 30% of the data on the high-risk well.** You can see the readings start to deviate. Stick-slip is climbing. Shock peak is elevated. ECD is trending up. These are the early signatures of trouble.
+>
+> In a traditional setup, an engineer would have to be staring at each of these charts individually and mentally correlating them. DrillGuard does that correlation automatically — it's watching all eight channels simultaneously, and it's comparing what it sees right now against what it has learned from thousands of hours of normal drilling data.
+>
+> **Question for you — when you're on the rig floor, how many of these parameters are you actually able to monitor at the same time? And which ones do you tend to focus on most?**"
+
+*[PAUSE — listen to their answer. This tells you which parameters matter most to real engineers.]*
+
+**[Scroll to the right panel — alerts and recommendations]**
+
+> "On the right side, you see the active alerts for this well and AI-generated recommendations. Look at this one — it's telling you 'Reduce WOB by 5-10 klb and increase RPM to reduce torque buildup. Monitor for improvement over next 15 minutes.'
+>
+> That's not a generic warning. That's a specific, actionable instruction generated by the AI based on which model triggered the alert and which features are driving the risk score.
+>
+> **Does that kind of recommendation feel useful? What information would you want to see in an alert that you don't normally get today?**"
+
+*[PAUSE — this is gold. Whatever they say, remember it.]*
+
+**[Toggle the Wellbore Schematic button]**
+
+> "This is a bonus feature — the wellbore schematic. You can see the formations — Benin Sand, Agbada Shale, Akata — the casing strings, and where the bit is right now. This gives context to the sensor data. If the bit just entered a reactive shale zone, that changes how you interpret the ECD trend."
+
+**[Drag-select a section on any sensor chart to open the Log Analysis Modal]**
+
+> "One more thing — I can select any time window on the chart, and the system gives me detailed statistics for that window. Min, max, mean, standard deviation, and a focused view of the sensor data in that range. This is useful when you're investigating an event — you don't have to go to a separate log analysis tool."
+
+---
+
+## SCREEN 3: RISK ANALYSIS (2-3 minutes)
+
+*[Click the brain icon or navigate to /wells/well-1/analysis]*
+
+> "This is where we explain the 'why' behind every risk score.
+>
+> DrillGuard uses **three AI models**, and this page shows you exactly what each one is seeing.
+>
+> **The first model — Random Forest** — this one has learned what normal drilling looks like. It compares current conditions against that baseline and flags deviations. Think of it as the model that says 'this doesn't look right.'
+>
+> **The second — LSTM Autoencoder** — this is a deep learning model that looks at sequences over time. It catches things that develop slowly — a gradual trend that a human might not notice for 20 or 30 minutes. It's the model that says 'this pattern is unusual.'
+>
+> **The third — Dynamic Time Warping** — this one compares what's happening right now against patterns from past failures. If the current sensor signature looks like something that led to a stuck pipe event six months ago, this model catches it. It's the model that says 'I've seen this before, and it didn't end well.'
+>
+> The three scores are fused — Random Forest contributes 40%, LSTM 35%, DTW 25% — into that single risk score you see on the gauge.
+>
+> Below that, you see **feature importance** — which specific sensor measurements are driving the risk right now. In this case, torque standard deviation over the last 15 minutes is the biggest contributor. That tells you exactly where to look.
+>
+> And at the bottom — **similar historical events**. The system found past events that match the current pattern, with a similarity percentage. This gives you precedent — you've seen something like this before, and here's what happened.
+>
+> **Question — when a model tells you there's a problem, how important is it for you to understand why it's saying that? Do you trust a number more if you can see what's behind it?**"
+
+*[PAUSE — this is critical for understanding whether engineers want explainability or just want a simple red/green light.]*
+
+---
+
+## SCREEN 4: ALERT MANAGEMENT (2 minutes)
+
+*[Navigate to /alerts]*
+
+> "This is where all alerts across all wells are managed.
+>
+> You can filter by severity, by well, by status. Every alert shows which well, what the risk score was, when it happened, and which AI model was the primary driver.
+>
+> The key design decision here is **alert fatigue**. If the system sends you a warning every 30 seconds about the same issue, you'll start ignoring it. So DrillGuard groups related alerts. If an alert fires for the same well, same failure type, same model — it suppresses the duplicate for 15 minutes. But if the situation escalates — if it goes from WATCH to ELEVATED within 10 minutes — that's a new alert, it bypasses the suppression.
+>
+> You can acknowledge alerts, mark them as resolved, or — and this is important — **mark them as false positives**. When you mark something as a false positive, the system learns from that. Over time, it gets better at understanding what's a real problem versus what's just normal noise for your specific well and formation.
+>
+> **In your experience, what percentage of alarms or alerts on your current systems turn out to be false alarms? And is there a particular type of alert that's most annoying or least useful?**"
+
+*[PAUSE — this tells you what kinds of false positives to prioritize fixing.]*
+
+---
+
+## SCREEN 5: HISTORICAL ANALYSIS (1-2 minutes)
+
+*[Navigate to /history]*
+
+> "This page shows every event the system has detected over time. Each dot on this chart is an event — the shape tells you the type. Diamonds are stuck pipe, triangles are kicks, circles are lost circulation, squares are washouts.
+>
+> The stats up top show the system's performance — detection rate, false positive rate, average lead time, total events. These are not just academic metrics. They tell you whether you can trust this system or not.
+>
+> If the detection rate is 85% and the false positive rate is 12%, that means 85 out of 100 real problems get caught, and roughly 1 in 8 alerts is a false alarm. You can decide whether that tradeoff works for your operation.
+>
+> **What would a useful detection rate look like for you? At what false positive rate would you start ignoring the system?**"
+
+*[PAUSE — this tells you the acceptable threshold in the real world.]*
+
+---
+
+## SCREEN 6: SETTINGS (30 seconds)
+
+*[Navigate to /settings, click Thresholds tab]*
+
+> "Quick thing — the system is configurable. These threshold sliders control when each alert level triggers. Right now, WATCH fires at 30, ELEVATED at 50, ACTION at 71. But every operation is different — if you're drilling a high-risk HPHT well, you might want to lower these thresholds to be more cautious. If you're in a routine section, you might raise them to reduce noise.
+>
+> The notification settings let you control which channels deliver which severity level. Maybe WATCH only shows on the dashboard, ELEVATED also sends a push notification to your phone, and ACTION triggers an SMS.
+>
+> **How would you want to be notified? If it's 2 AM and something starts going wrong, what's the fastest way to reach the right person?**"
+
+*[PAUSE — this is about understanding their communication reality on the rig.]*
+
+---
+
+## THE ASK (2 minutes)
+
+> "That's DrillGuard. Let me be honest about where I am.
+>
+> What you just saw is the **frontend** — the user experience layer. It's live and deployed. Behind this, I'm building the actual AI models that process real sensor data — trained on the Equinor Volve field dataset, which is publicly available data from a real North Sea well.
+>
+> What I need from people like you is **reality**. I've read the papers. I've studied the data. But I've never stood on a rig floor at 3 AM watching a pressure spike.
+>
+> So here's what I'd love to understand from you:"
+
+**[These are your key feedback questions — ask all of them]**
+
+> "1. **What's the biggest drilling failure headache you've dealt with?** The one that cost the most time or money or stress. What happened and how did you find out about it?
+>
+> 2. **When something starts going wrong, what do you actually see first?** Not what the textbook says — what do you personally notice?
+>
+> 3. **Is there a failure type that's particularly hard to predict?** Stuck pipe, lost circulation, kick, wellbore instability — which one catches people off guard the most?
+>
+> 4. **If this system existed on your rig today, would you use it?** What would make you trust it? What would make you ignore it?
+>
+> 5. **What did I get wrong?** Anything on this dashboard that doesn't match how you actually work? Something that's missing? Something that's unnecessary?"
+
+---
+
+## CLOSING
+
+> "Thank you. Honestly, this conversation is more valuable to me than any paper I've read. I'm taking everything you've said and feeding it directly into how I build this.
+>
+> I'll send you the link — drill-guard-frontend.vercel.app — feel free to explore it at your own pace. And if you think of anything else after today, please reach out. I'm building this for people like you, so your input is everything."
+
+---
+
+## POST-MEETING CHECKLIST
+
+After the meeting, immediately write down:
+
+- [ ] Which parameters they said they focus on most
+- [ ] What their biggest pain point is (stuck pipe? kicks? NPT reporting?)
+- [ ] How they want to be notified (SMS? phone call? dashboard?)
+- [ ] What false positive rate they'd tolerate
+- [ ] What they said about trusting AI recommendations
+- [ ] Any features they asked for that we don't have
+- [ ] Any features we showed that they said aren't useful
+- [ ] Whether they'd actually use this (and what would convince them)
+- [ ] Any contacts they offered to connect you with
+- [ ] Their exact words on what they liked most (use this in your pitch later)
+
+---
+
+## TIPS FOR THE MEETING
+
+1. **Don't read from this script.** Use it as a guide but speak naturally. You know this system — talk about it like you built it, because you did.
+
+2. **Pause after every question.** The silence is where the value is. Let them talk. Don't jump in.
+
+3. **Take notes during pauses.** Write down their exact words, not your interpretation.
+
+4. **If they point out something wrong, don't defend it.** Say "That's exactly why I'm talking to you — tell me more about how it actually works."
+
+5. **If they get excited about something, dig deeper.** "You mentioned the shift handover summary — is that because the current process is painful? Tell me about that."
+
+6. **If they seem skeptical about AI, acknowledge it.** "I completely understand the skepticism. That's why the system shows you exactly why it's flagging something — the three models, the feature importance, the historical precedent. You can always see what's behind the number."
+
+7. **Record the meeting if they consent.** You'll forget half of what was said by tomorrow.
+
+8. **Follow up within 24 hours.** Send a thank you, a summary of what you heard, and ask if they'd be open to testing a future version with real data.

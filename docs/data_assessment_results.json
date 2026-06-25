@@ -1,0 +1,15 @@
+{
+  "files_analyzed": [],
+  "summary": {
+    "total_files": 0,
+    "wells_identified": [],
+    "has_time_indexed": false,
+    "has_event_labels": false,
+    "parameter_coverage": {},
+    "critical_gaps": [
+      "No time-indexed sensor data found",
+      "No event labels found",
+      "Insufficient well count: 0 (need 5-10 minimum)"
+    ]
+  }
+}
