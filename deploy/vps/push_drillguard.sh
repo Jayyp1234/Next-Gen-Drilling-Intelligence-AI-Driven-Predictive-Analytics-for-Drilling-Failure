@@ -11,13 +11,17 @@ APP=/opt/drillguard
 echo "== rsync serving code + models (venv is built ON the server) =="
 rsync -av --delete \
   --exclude .venv --exclude __pycache__ --exclude .gitignore \
-  "$ROOT/ml-pipeline/serving/" "$HOST:$APP/serving/"
+  "$ROOT/ml-pipeline/serving/" "$HOST:$APP/ml-pipeline/serving/"
+
+echo "== rsync training/etl modules infer.py imports =="
+rsync -av --exclude __pycache__ "$ROOT/ml-pipeline/training/step4/" "$HOST:$APP/ml-pipeline/training/step4/"
+rsync -av --exclude __pycache__ "$ROOT/ml-pipeline/etl/" "$HOST:$APP/ml-pipeline/etl/"
 
 echo "== build venv + restart service =="
 ssh "$HOST" bash -s <<'REMOTE'
 set -euo pipefail
 export PATH="$HOME/.local/bin:$PATH"
-cd /opt/drillguard/serving
+cd /opt/drillguard/ml-pipeline/serving
 [ -d .venv ] || uv venv --python 3.12 --managed-python .venv
 uv pip install --python .venv/bin/python -r requirements.txt \
   --extra-index-url https://download.pytorch.org/whl/cpu
