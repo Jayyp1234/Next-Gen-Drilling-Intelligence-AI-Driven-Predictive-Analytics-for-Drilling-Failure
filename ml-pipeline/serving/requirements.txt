@@ -1,0 +1,12 @@
+# DrillGuard inference service — pin versions that match the trained artifacts.
+# On a host, prefer the CPU-only torch wheel to keep the image small:
+#   pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart
+scikit-learn==1.9.0
+torch==2.13.0
+pandas
+numpy
+joblib
+scipy

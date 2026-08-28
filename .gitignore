@@ -120,3 +120,15 @@ data/processed/
 *.h5
 *.hdf5
 
+
+# ---- local-only heavy data / scratch (never push) -------------------------
+Volve dataset/
+actual data/
+raw_data/
+ml-pipeline/data/
+DrillGuard_UI_Designs_All_Images/
+.claude/
+*.log
+.venv/
+__pycache__/
+*.pyc

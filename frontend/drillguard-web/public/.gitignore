@@ -1,0 +1,4 @@
+# Sample telemetry must ship (served by /analyze on Vercel) — override the global *.csv rule
+!sample-well.csv
+!sample-eos.csv
+!sample-volve.csv

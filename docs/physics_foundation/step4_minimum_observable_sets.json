@@ -1,0 +1,125 @@
+{
+  "Bit wear": {
+    "primary_feature": "MSE + ROP trend",
+    "minimum": [
+      "WOB",
+      "Collar RPM",
+      "Torque",
+      "ROP"
+    ],
+    "enhanced": [
+      "Gamma ray",
+      "Stick-slip",
+      "Shock"
+    ],
+    "context": [
+      "Gamma ray"
+    ]
+  },
+  "Pack-off / hole cleaning": {
+    "primary_feature": "ECD trend + transport ratio",
+    "minimum": [
+      "ECD",
+      "Standpipe pressure",
+      "Torque"
+    ],
+    "enhanced": [
+      "Hookload*",
+      "Flow-in/out*",
+      "ROP",
+      "Downhole pressure"
+    ],
+    "context": []
+  },
+  "Differential sticking": {
+    "primary_feature": "overbalance \u0394P + stationary time",
+    "minimum": [
+      "Downhole pressure",
+      "Mud weight*",
+      "Block position"
+    ],
+    "enhanced": [
+      "Hookload*",
+      "Torque",
+      "Gamma ray"
+    ],
+    "context": [
+      "Block position",
+      "Gamma ray"
+    ]
+  },
+  "Mechanical sticking": {
+    "primary_feature": "torque/drag erratic + restricted movement",
+    "minimum": [
+      "Torque",
+      "Hookload*",
+      "Block position"
+    ],
+    "enhanced": [
+      "Shock",
+      "Collar RPM"
+    ],
+    "context": [
+      "Block position"
+    ]
+  },
+  "Lost circulation": {
+    "primary_feature": "ECD margin + pit/flow deficit",
+    "minimum": [
+      "ECD",
+      "Pit volume*",
+      "Flow-in/out*"
+    ],
+    "enhanced": [
+      "Standpipe pressure",
+      "Mud weight*",
+      "Downhole pressure"
+    ],
+    "context": [
+      "Mud weight*"
+    ]
+  },
+  "Wellbore instability": {
+    "primary_feature": "torque/drag + ECD, cavings",
+    "minimum": [
+      "Torque",
+      "ECD",
+      "ROP"
+    ],
+    "enhanced": [
+      "Gamma ray",
+      "Downhole temp"
+    ],
+    "context": [
+      "Gamma ray"
+    ],
+    "note": "best indicators (caliper, caving morphology) NOT in Volve surface set"
+  },
+  "Kick / influx": {
+    "primary_feature": "flow/pit gain (detection)",
+    "minimum": [
+      "Flow-in/out*",
+      "Pit volume*"
+    ],
+    "enhanced": [
+      "Standpipe pressure",
+      "Downhole pressure",
+      "ROP",
+      "Downhole temp"
+    ],
+    "context": []
+  },
+  "Stick-slip": {
+    "primary_feature": "stick-slip index (self-diagnostic)",
+    "minimum": [
+      "Stick-slip"
+    ],
+    "enhanced": [
+      "Collar RPM",
+      "Torque",
+      "Shock"
+    ],
+    "context": [],
+    "note": "only self-diagnostic mechanism: 1 channel suffices"
+  }
+}

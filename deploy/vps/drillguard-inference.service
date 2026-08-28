@@ -1,0 +1,21 @@
+# /etc/systemd/system/drillguard-inference.service
+# DrillGuard model service — uvicorn on localhost, Apache proxies infer.DOMAIN to it.
+[Unit]
+Description=DrillGuard inference API (FastAPI/uvicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/drillguard/serving
+# INFER_CORS: comma-separated browser origins allowed to call this API directly.
+Environment=INFER_CORS=https://app.DOMAIN
+ExecStart=/var/www/drillguard/serving/.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8099 --workers 1
+Restart=always
+RestartSec=3
+# torch is the big consumer; cap so a runaway can never take the box down.
+MemoryMax=1500M
+
+[Install]
+WantedBy=multi-user.target
