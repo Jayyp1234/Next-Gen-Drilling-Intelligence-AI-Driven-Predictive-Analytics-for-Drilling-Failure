@@ -48,7 +48,7 @@ final class Http
 
     public static function bearerToken(): ?string
     {
-        $h = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $h = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
         if ($h === '' && function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
             $h = $headers['Authorization'] ?? $headers['authorization'] ?? '';

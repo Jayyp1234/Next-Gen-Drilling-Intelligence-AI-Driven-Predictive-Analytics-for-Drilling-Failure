@@ -1,13 +1,12 @@
-# Route every request through index.php (Apache / cPanel shared hosting).
+# Pass the Authorization header through to PHP (cPanel/Apache strips it).
+# MUST run before the front-controller rule — its [L] flag ends the pass.
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Route every request through index.php.
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]
-</IfModule>
-
-# Pass the Authorization header through to PHP (some hosts strip it).
-<IfModule mod_rewrite.c>
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 </IfModule>
