@@ -13,9 +13,8 @@ rsync -av --delete \
   --exclude .venv --exclude __pycache__ --exclude .gitignore \
   "$ROOT/ml-pipeline/serving/" "$HOST:$APP/ml-pipeline/serving/"
 
-echo "== rsync training/etl modules infer.py imports =="
-rsync -av --exclude __pycache__ "$ROOT/ml-pipeline/training/step4/" "$HOST:$APP/ml-pipeline/training/step4/"
-rsync -av --exclude __pycache__ "$ROOT/ml-pipeline/etl/" "$HOST:$APP/ml-pipeline/etl/"
+echo "== ship training/etl modules infer.py imports (tar: macOS rsync chokes here) =="
+tar czf - --exclude __pycache__ -C "$ROOT/ml-pipeline" training/step4 etl | ssh "$HOST" "tar xzf - -C $APP/ml-pipeline"
 
 echo "== build venv + restart service =="
 ssh "$HOST" bash -s <<'REMOTE'

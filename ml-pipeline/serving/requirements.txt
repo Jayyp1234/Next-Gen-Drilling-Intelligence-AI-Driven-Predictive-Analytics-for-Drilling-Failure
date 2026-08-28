@@ -1,12 +1,18 @@
 # DrillGuard inference service — pin versions that match the trained artifacts.
 # On a host, prefer the CPU-only torch wheel to keep the image small:
 #   pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cpu
+#
+# ⚠️ CPU-BASELINE PINS (do not lift casually): the Namecheap VPS exposes
+# "QEMU Virtual CPU 2.5+" with NO SSE4.2/AVX (pre-x86-64-v2). numpy>=2 and
+# scipy>=1.14 hard-crash there ("built with baseline optimizations X86_V2").
+# numpy 1.26 + scipy 1.13 run on plain SSE2; sklearn 1.9.0 + torch 2.13+cpu
+# verified working against them on that exact machine (2026-08-28).
 fastapi>=0.110
 uvicorn[standard]>=0.29
 python-multipart
 scikit-learn==1.9.0
 torch==2.13.0
 pandas
-numpy
+numpy==1.26.4
 joblib
-scipy
+scipy==1.13.1
